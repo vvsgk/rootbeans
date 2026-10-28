@@ -8,8 +8,8 @@
   --muted: #81776a;
   --line: rgba(48,39,32,.18);
   --max: 1240px;
-  --serif: 'Cormorant Garamond',Georgia,serif;
-  --sans: 'Inter',Arial,sans-serif;
+  --serif: 'Lora', Georgia, serif;
+  --sans: 'Inter', Arial, sans-serif;
   --ease: cubic-bezier(.2,.7,.2,1);
 }
 * {

@@ -7,7 +7,7 @@ export default function HeroSection({ navigate }) {
     <section className="hero section-wrap" aria-labelledby="home-title">
       <div className="hero-copy">
         <p className="eyebrow">A VISION TAKING ROOT · 2026–2028</p>
-        <h1 id="home-title">Before the first<br />cup, there is<br /><em>a seed.</em></h1>
+        <h1 id="home-title">Great flavour begins<br />long before the<br /><em>first sip</em></h1>
         <p className="hero-sub">Two friends. Two beans. A journey worth growing.</p>
         <div className="hero-actions">
           <button className="button-dark" onClick={() => navigate('/journey')}>
