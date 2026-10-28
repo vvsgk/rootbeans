@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Root Beans</title>
+  <script>
+    const base = "/rootbeans";
+
+    const path = location.pathname.startsWith(base)
+      ? location.pathname.slice(base.length) || "/"
+      : location.pathname;
+
+    location.replace(
+      `${base}/?p=${encodeURIComponent(path)}`
+    );
+  </script>
+</head>
+<body>
+  Opening Root Beans...
+</body>
+</html>
