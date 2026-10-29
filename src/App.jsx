@@ -86,30 +86,30 @@ function getAppPath() {
 
 function NotFound({ navigate }) {
   return (
-      <main className="not-found section-wrap">
-        <Sprout size={28} strokeWidth={1} />
+    <main className="not-found section-wrap">
+      <Sprout size={28} strokeWidth={1} />
 
-        <p className="eyebrow">NOT IN THIS JOURNAL</p>
+      <p className="eyebrow">PAGE NOT FOUND</p>
 
-        <h1>
-          This page has
-          <br />
-          <em>not taken root.</em>
-        </h1>
+      <h1>
+        No roots found.
+        <br />
+        <em>We're still growing.</em>
+      </h1>
 
-        <p className="page-lede">
-          The page may have moved, or its journal entry may
-          still be a private draft.
-        </p>
+      <p className="page-lede">
+        We're on our way to building this part of Root Beans.
+        In the meantime, explore what's taking root on our Journey page.
+      </p>
 
-        <button
-            className="button-dark"
-            onClick={() => navigate('/journey')}
-        >
-          <ArrowLeft size={14} />
-          Return to Journey
-        </button>
-      </main>
+      <button
+        className="button-dark"
+        onClick={() => navigate('/journey')}
+      >
+        <ArrowLeft size={14} />
+        Go to Journey
+      </button>
+    </main>
   );
 }
 

@@ -3,20 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Root Beans</title>
+  <meta name="robots" content="noindex">
+  <title>Root Beans | Page not found</title>
   <script>
-    const base = "/rootbeans";
-
-    const path = location.pathname.startsWith(base)
-      ? location.pathname.slice(base.length) || "/"
-      : location.pathname;
-
-    location.replace(
-      `${base}/?p=${encodeURIComponent(path)}`
-    );
+    const path = location.pathname || "/";
+    location.replace("/?p=" + encodeURIComponent(path));
   </script>
 </head>
 <body>
-  Opening Root Beans...
+  <p>No roots found. We're still growing.</p>
+  <a href="/journey">Go to Journey</a>
 </body>
 </html>
