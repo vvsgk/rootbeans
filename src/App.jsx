@@ -10,13 +10,10 @@ import Journey from './pages/Journey.jsx';
 import Coffee from './pages/Coffee.jsx';
 import Cacao from './pages/Cacao.jsx';
 import JournalEntry from './pages/JournalEntry.jsx';
-import JournalDashboard from './pages/admin/JournalDashboard.jsx';
+import JournalDataDashboard from './pages/admin/JournalDataDashboard.jsx';
+import { fetchJournalFeed } from './data/journalFeed.js';
 
-import {
-  getJournalEntries,
-  getPublishedEntries,
-  saveJournalEntries,
-} from './data/journal.js';
+import { getPublishedEntries } from './data/journal.js';
 
 import { ArrowLeft, Sprout } from 'lucide-react';
 
@@ -32,8 +29,8 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 function normalizeAppPath(path) {
   if (!path) return '/';
-
-  return path.startsWith('/') ? path : `/${path}`;
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  return normalized.length > 1 ? normalized.replace(/\/+$/, '') : normalized;
 }
 
 function toBrowserPath(appPath) {
@@ -53,7 +50,9 @@ function toBrowserPath(appPath) {
  * recognize. That file redirects back to the app with a
  * "?p=/journey" parameter. Restore the intended route here.
  */
-function getAppPath() {
+function getAppPath(initialPath = '/') {
+  if (typeof window === 'undefined') return normalizeAppPath(initialPath);
+
   const params = new URLSearchParams(window.location.search);
   const redirectedPath = params.get('p');
 
@@ -113,10 +112,26 @@ function NotFound({ navigate }) {
   );
 }
 
-export default function App() {
-  const [pathname, setPathname] = useState(() => getAppPath());
-  const [entries, setEntries] = useState(() => getJournalEntries());
-  const [toast, setToast] = useState('');
+export default function App({ initialPath, initialEntries } = {}) {
+  const [pathname, setPathname] = useState(() => initialPath ? normalizeAppPath(initialPath) : getAppPath());
+  const [entries, setEntries] = useState(() => initialEntries || (typeof window !== 'undefined' && window.__JOURNAL_ENTRIES__) || []);
+  const [journalError, setJournalError] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchJournalFeed()
+      .then((journalEntries) => {
+        if (cancelled) return;
+        setEntries(journalEntries);
+        setJournalError('');
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        console.error('Could not load the published journal JSON.', error);
+        setJournalError('The published journal file could not be loaded. Showing the entries embedded in this page.');
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   /*
    * Internal navigation always works with application routes.
@@ -272,63 +287,20 @@ export default function App() {
     };
   }, [pathname]);
 
-  const notify = useCallback((message) => {
-    setToast(message);
-
-    window.setTimeout(() => {
-      setToast('');
-    }, 3000);
-  }, []);
-
-  /*
-   * Persist journal entries using the existing storage layer.
-   */
-  const saveEntries = useCallback((nextEntries) => {
-    const saved = saveJournalEntries(nextEntries);
-
-    if (saved) {
-      setEntries(nextEntries);
-    } else {
-      notify(
-          'The browser could not store the changes. ' +
-          'Export or copy the content before leaving.'
-      );
-    }
-
-    return saved;
-  }, [notify]);
-
   const publishedEntries = useMemo(
       () => getPublishedEntries(entries),
       [entries]
   );
 
   /*
-   * Local journal dashboard.
-   * This remains browser-local and is not a secure,
-   * shared authentication system.
+   * Journal edits are made in the checked-in JSON file.
    */
   const isAdmin =
       pathname === '/admin' ||
       pathname.startsWith('/admin/');
 
   if (isAdmin) {
-    return (
-        <>
-          <JournalDashboard
-              entries={entries}
-              saveEntries={saveEntries}
-              navigate={navigate}
-              notify={notify}
-          />
-
-          {toast && (
-              <div className="toast" role="status">
-                {toast}
-              </div>
-          )}
-        </>
-    );
+    return <JournalDataDashboard />;
   }
 
   /*
@@ -384,15 +356,12 @@ export default function App() {
             pathname={pathname}
         />
 
+        {journalError && <div className="section-wrap storage-warning" role="alert">{journalError}</div>}
+
         {page}
 
         <SiteFooter navigate={navigate} />
 
-        {toast && (
-            <div className="toast" role="status">
-              {toast}
-            </div>
-        )}
       </>
   );
 }

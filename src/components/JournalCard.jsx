@@ -1,11 +1,12 @@
 import { ArrowUpRight, Sprout } from 'lucide-react';
 import { formatDate } from '../data/journal.js';
+import { resolveJournalImage } from '../data/journalFeed.js';
 
 export function PhotoFrame({ src, alt, kind = 'seed', className = '' }) {
   return (
     <div className={`photo photo-${kind} ${className}`.trim()}>
       {src ? (
-        <img src={src} alt={alt || 'Root Beans field journal photograph'} loading="lazy" />
+        <img src={resolveJournalImage(src)} alt={alt || 'Root Beans field journal photograph'} loading="lazy" />
       ) : (
         <div className="photo-placeholder" role="img" aria-label={alt || 'Photograph to be added'}>
           <Sprout size={30} strokeWidth={1} aria-hidden="true" />
